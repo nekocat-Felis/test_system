@@ -1,4 +1,6 @@
-target/
+target/**/*
+diff/**/*
 
 !*/.gitkeep
-!target/example**
+!diff/*example.csv
+!target/example**/*
