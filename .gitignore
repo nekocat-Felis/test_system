@@ -1,5 +1,4 @@
-diff/
-target/
+/target/
 
 !*/.gitkeep
 !target/example**
