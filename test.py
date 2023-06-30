@@ -17,7 +17,8 @@ for dir_name in dir_list:
         method_dic[dir_name[7:-1]] = import_module(f"target.{dir_name[7:-1]}.main")
         sys.path.remove(f"{__file__[:-7]}target\\{dir_name[7:-1]}")
     except:
-        error_array.append(dir_name[7:-1])
+        if dir_name[7:-1] != "escape":
+            error_array.append(dir_name[7:-1])
 target_list = list(method_dic.keys())
 # 読み込みエラーが一度でも起きた場合に警告を表示
 if len(error_array) > 0:
@@ -63,7 +64,7 @@ def main() -> None:
             spread = "\t"
             break
         else:
-            print("c または t と入力してください。")
+            print("\nc または t と入力してください。\n")
 
 
     # 計測結果のテキスト化
