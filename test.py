@@ -17,7 +17,7 @@ for dir_name in dir_list:
         method_dic[dir_name[7:-1]] = import_module(f"target.{dir_name[7:-1]}.main")
         sys.path.remove(f"{__file__[:-7]}target\\{dir_name[7:-1]}")
     except:
-        if dir_name[7:-1] != "escape":
+        if dir_name[7:-1] != "__escape":
             error_array.append(dir_name[7:-1])
 target_list = list(method_dic.keys())
 # 読み込みエラーが一度でも起きた場合に警告を表示
