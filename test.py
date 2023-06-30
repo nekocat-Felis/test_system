@@ -52,15 +52,28 @@ def main() -> None:
 
         # 出力結果を表示に加える
         res_dic[target_name] = ex_res # 名前をキーに、結果を値に
-        
+
+    while True:
+        print("データを出力する形式を選んでください。")
+        format = input("csv形式の場合はc、tsv形式の場合はtと入力してください。：")
+        if format == "c" or format == "C":
+            spread = ","
+            break
+        elif format == "t" or format == "T":
+            spread = "\t"
+            break
+        else:
+            print("c または t と入力してください。")
+
+
     # 計測結果のテキスト化
-    writeLinesArray.append(f'num\t{"\t".join(list(diff_dic.keys()))}\n')
+    writeLinesArray.append(f'num{spread}{spread.join(list(diff_dic.keys()))}\n')
     for i in range(max_count):
-        writeLinesArray.append(f"{i + 1}\t")
+        writeLinesArray.append(f"{i + 1}{spread}")
         for target_name in list(diff_dic.keys()):
             writeLinesArray[-1] += diff_dic[target_name][i]
             if target_name != list(diff_dic.keys())[-1]: # 最後の対象以外の時は、後ろに,を付けて切り分ける
-                writeLinesArray[-1] += "\t"
+                writeLinesArray[-1] += spread
             else:
                 writeLinesArray[-1] += "\n"
     
@@ -70,21 +83,21 @@ def main() -> None:
         if object_check(res_dic[res]):
             writeLinesArray.append(f"\nresponse\n")
             for i in range(max_count):
-                writeLinesArray.append(f"{i + 1}\t")
+                writeLinesArray.append(f"{i + 1}{spread}")
                 for target_name in list(res_dic.keys()):
-                    writeLinesArray[-1] += f"{res_dic[target_name][i]}".replace("\n","  ").replace("\t","    ") # 出力結果をcsvに出力する際に形が崩れるのを防ぐため、改行とタブのコードを排除している。
+                    writeLinesArray[-1] += f"{res_dic[target_name][i]}".replace("\n","  ").replace(spread,"    ") # 出力結果をcsvに出力する際に形が崩れるのを防ぐため、改行コードとカンマもしくはタブコードを排除している。
                     if target_name != list(res_dic.keys())[-1]: # 最後の対象以外の時は、後ろに,を付けて切り分ける
-                        writeLinesArray[-1] += "\t"
+                        writeLinesArray[-1] += spread
                     else:
                         writeLinesArray[-1] += "\n"
             break
         else:
             pass
 
-    # csvとして書き出し
+    # 書き出し
     now = datetime.datetime.now().strftime(r"%Y-%m-%d_%H:%M:%S")
-    file_name = now.replace(":","-") + "_diff.csv" # ファイル名に組み込めないコロンを排除
-    print("CSVファイルを出力しています...",end = " ",flush = True)
+    file_name = now.replace(":","-") + f"_diff.{format}sv" # ファイル名に組み込めないコロンを排除
+    print(f"\n{format.upper()}SVファイルを出力しています...",end = " ",flush = True)
     with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w") as f:
         f.write(f"{now.replace('-','/').replace('_',' ')}\n") # 最初の行にファイル出力のタイミングを記載、個人的にわかりやすい表記に変えている
         f.writelines(writeLinesArray) # データの表を書き込み
