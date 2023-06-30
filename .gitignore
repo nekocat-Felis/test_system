@@ -1,6 +1,6 @@
 target/**/*
 diff/**/*
 
-!*/**/.gitkeep
+!.gitkeep
 !diff/*example.*sv
 !target/example**/*
