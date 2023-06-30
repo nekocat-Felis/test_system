@@ -1,6 +1,7 @@
 target/**/*
 diff/**/*
 
+!target/__escape/*/
 !/**/.gitkeep
 !diff/*example.*sv
 !target/example**/*
