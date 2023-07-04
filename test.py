@@ -100,7 +100,7 @@ def main() -> None:
     file_name = now.replace(":","-") + f"_diff.{format}sv" # ファイル名に組み込めないコロンを排除
     print(f"\n{format.upper()}SVファイルを出力しています...",end = " ",flush = True)
     with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w") as f:
-        f.write(f"{now.replace('-','/').replace('_',' ')}\n") # 最初の行にファイル出力のタイミングを記載、個人的にわかりやすい表記に変えている
+        f.write(f"{now.replace('-','/').replace('_',' ')}{spread * len(list(res_dic.keys()))}単位：秒\n") # 最初の行にファイル出力のタイミングを記載、個人的にわかりやすい表記に変えている
         f.writelines(writeLinesArray) # データの表を書き込み
     print("終了しました。\n")
 
