@@ -1,6 +1,6 @@
 target/**/*
 diff/**/*
-/**/__pycache__
+/**/__pycache__/
 
 !/**/.gitkeep
 !diff/*example.*sv
