@@ -1,4 +1,4 @@
-import datetime,glob,os,gc,sys,time
+import datetime,glob,os,gc,sys,time,csv
 from importlib import import_module
 
 # どこから起動してもいいように、ソースファイルの場所に移動している。
@@ -41,7 +41,7 @@ def main() -> None:
         # 計測
         for i in range(max_count):
             print(str(i + 1) + "回目",end = " ",flush = True)
-            # 処理時間と出力結果を受け取り配列に格納。何もない場合でも return_object には None (多言語における null 相当) が入る。
+            # 処理時間と出力結果を受け取り配列に格納。何もない場合でも return_object には None (他言語における null 相当) が入る。
             diff,return_object = func(target_name)
             response.append(str(diff.seconds + diff.microseconds / 1000000))        
             ex_res.append(return_object)
@@ -56,52 +56,50 @@ def main() -> None:
 
     while True:
         print("データを出力する形式を選んでください。")
-        format = input("csv形式の場合はc、tsv形式の場合はtと入力してください。：")
-        if format == "c" or format == "C":
+        format = input("csv形式の場合はc、tsv形式の場合はtと入力してください。：").lower()
+        if format == "c":
             spread = ","
             break
-        elif format == "t" or format == "T":
+        elif format == "t":
             spread = "\t"
             break
         else:
             print("\nc または t と入力してください。\n")
 
-
-    # 計測結果のテキスト化
-    writeLinesArray.append(f'num{spread}{spread.join(list(diff_dic.keys()))}\n')
+    # 計測結果配列の変形
+    titleLine = ["num"] + target_list # 項目名
+    csvList = [] # 出力するcsv
     for i in range(max_count):
-        writeLinesArray.append(f"{i + 1}{spread}")
-        for target_name in list(diff_dic.keys()):
-            writeLinesArray[-1] += diff_dic[target_name][i]
-            if target_name != list(diff_dic.keys())[-1]: # 最後の対象以外の時は、後ろに,を付けて切り分ける
-                writeLinesArray[-1] += spread
-            else:
-                writeLinesArray[-1] += "\n"
-    
-    # 出力結果のテキスト化
-    for res in list(res_dic.keys()):
-        # 出力がいずれか一か所でも出ていた場合はテキスト化を行い、そうでなければ行わない。
-        if object_check(res_dic[res]):
-            writeLinesArray.append(f"\nresponse\n")
+        # ここから行の生成
+        csvList.append([])
+        csvList[-1].append(i+1) # 行番号
+        # ここから値の入力
+        for target_name in target_list:
+            csvList[-1].append(diff_dic[target_name][i])
+
+    # 出力結果の追加
+    for target_name in target_list:
+        if object_check(res_dic[target_name]): # 出力がいずれか一か所でも出ていた場合はテキスト化を行い、そうでなければ行わない。
+            csvList.append([]) # 一行開ける
+            csvList.append(["responce"]) # タイトル表示
             for i in range(max_count):
-                writeLinesArray.append(f"{i + 1}{spread}")
-                for target_name in list(res_dic.keys()):
-                    writeLinesArray[-1] += f"{res_dic[target_name][i]}".replace("\n","  ").replace(spread,"    ") # 出力結果をcsvに出力する際に形が崩れるのを防ぐため、改行コードとカンマもしくはタブコードを排除している。
-                    if target_name != list(res_dic.keys())[-1]: # 最後の対象以外の時は、後ろに,を付けて切り分ける
-                        writeLinesArray[-1] += spread
-                    else:
-                        writeLinesArray[-1] += "\n"
-            break
-        else:
-            pass
+                # ここから行の生成
+                csvList.append([])
+                csvList[-1].append(i+1) # 行番号
+                # ここから値の入力
+                for target_name in target_list:
+                    csvList[-1].append(res_dic[target_name][i])
 
     # 書き出し
     now = datetime.datetime.now().strftime(r"%Y-%m-%d_%H:%M:%S")
     file_name = now.replace(":","-") + f"_diff.{format}sv" # ファイル名に組み込めないコロンを排除
     print(f"\n{format.upper()}SVファイルを出力しています...",end = " ",flush = True)
-    with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w") as f:
-        f.write(f"{now.replace('-','/').replace('_',' ')}{spread * len(list(res_dic.keys()))}単位：秒\n") # 最初の行にファイル出力のタイミングを記載、個人的にわかりやすい表記に変えている
-        f.writelines(writeLinesArray) # データの表を書き込み
+
+    with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w",encoding="utf-8",newline="") as csv_file:
+        writer = csv.writer(csv_file,delimiter=spread)
+        writer.writerow([now.replace('-','/').replace('_',' ')]) # 最初の行にファイル出力のタイミングを記載
+        writer.writerows(csvList)
+    
     print("終了しました。\n")
 
 def func(target_name: str) -> datetime.timedelta:
