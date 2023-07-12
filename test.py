@@ -67,8 +67,8 @@ def main() -> None:
             print("\nc または t と入力してください。\n")
 
     # 計測結果配列の変形
-    titleLine = ["num"] + target_list # 項目名
     csvList = [] # 出力するcsv
+    csvList.append(["num"] + target_list) # 項目名
     for i in range(max_count):
         # ここから行の生成
         csvList.append([])
@@ -95,9 +95,9 @@ def main() -> None:
     file_name = now.replace(":","-") + f"_diff.{format}sv" # ファイル名に組み込めないコロンを排除
     print(f"\n{format.upper()}SVファイルを出力しています...",end = " ",flush = True)
 
-    with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w",encoding="utf-8",newline="") as csv_file:
+    with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w",newline="") as csv_file:
         writer = csv.writer(csv_file,delimiter=spread)
-        writer.writerow([now.replace('-','/').replace('_',' ')]) # 最初の行にファイル出力のタイミングを記載
+        writer.writerow([now.replace('-','/').replace('_',' ')] + [None] * (len(target_list) - 1) + [f"データの個数：{max_count}"] ) # 最初の行にファイル出力のタイミングとデータの総数を記載
         writer.writerows(csvList)
     
     print("終了しました。\n")
