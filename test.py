@@ -19,7 +19,7 @@ for dir_name in dir_list:
         sys.path.remove(f"{__file__[:-7]}target\\{dir_name[7:-1]}")
     except:
         print(dir_name[7:-1])
-        if dir_name[7:-1] in setting.escape_list:
+        if dir_name[7:-1] not in setting.escape_list:
             error_array.append(dir_name[7:-1])
 target_list = list(method_dic.keys())
 # 読み込みエラーが一度でも起きた場合に警告を表示
