@@ -1,5 +1,6 @@
 import datetime,glob,os,gc,sys,time,csv
 from importlib import import_module
+import setting
 
 # どこから起動してもいいように、ソースファイルの場所に移動している。
 os.chdir(f"{__file__[:-7]}")
@@ -17,7 +18,7 @@ for dir_name in dir_list:
         method_dic[dir_name[7:-1]] = import_module(f"target.{dir_name[7:-1]}.main")
         sys.path.remove(f"{__file__[:-7]}target\\{dir_name[7:-1]}")
     except:
-        if dir_name[7:-1] != "__escape":
+        if dir_name[7:-1] in setting.escape:
             error_array.append(dir_name[7:-1])
 target_list = list(method_dic.keys())
 # 読み込みエラーが一度でも起きた場合に警告を表示
@@ -27,7 +28,7 @@ if len(error_array) > 0:
     print('フォルダ名やファイル名に "." が含まれていると、正常に読み込まれないことがあります。\n読み込む必要のないフォルダである場合は無視し、計測したい場合はフォルダ名を変更してください。\n')
 
 def main() -> None:
-    max_count = 10 # 計測回数の指定
+    setting.max_count = 10 # 計測回数の指定
     diff_dic = {} # 計測結果まとめの辞書
     res_dic = {} # 出力結果まとめの辞書
     writeLinesArray = [] # 出力するファイルの中身
@@ -89,6 +90,7 @@ def main() -> None:
                 # ここから値の入力
                 for target_name in target_list:
                     csvList[-1].append(res_dic[target_name][i])
+            break
 
     # 書き出し
     now = datetime.datetime.now().strftime(r"%Y-%m-%d_%H:%M:%S")
@@ -106,7 +108,8 @@ def func(target_name: str) -> datetime.timedelta:
     # target_nameの内容に応じて処理が変わるようにしておく
     while True:
         try:
-            gc.disable() # ガベージコレクションによるメモリ開放が処理に与える影響を排除している。これを含みたい場合はコメントアウトしてもいい。
+            if setting.gc:
+                gc.disable()
             start = datetime.datetime.now()
             return_object = method_dic[target_name].test() # 出力または None
             end = datetime.datetime.now()
