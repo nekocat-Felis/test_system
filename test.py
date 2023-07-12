@@ -28,7 +28,6 @@ if len(error_array) > 0:
     print('フォルダ名やファイル名に "." が含まれていると、正常に読み込まれないことがあります。\n読み込む必要のないフォルダである場合は無視し、計測したい場合はフォルダ名を変更してください。\n')
 
 def main() -> None:
-    setting.max_count = 10 # 計測回数の指定
     diff_dic = {} # 計測結果まとめの辞書
     res_dic = {} # 出力結果まとめの辞書
     writeLinesArray = [] # 出力するファイルの中身
@@ -40,7 +39,7 @@ def main() -> None:
         ex_res = [] # 出力結果の配列
 
         # 計測
-        for i in range(max_count):
+        for i in range(setting.max_count):
             print(str(i + 1) + "回目",end = " ",flush = True)
             # 処理時間と出力結果を受け取り配列に格納。何もない場合でも return_object には None (他言語における null 相当) が入る。
             diff,return_object = func(target_name)
@@ -70,7 +69,7 @@ def main() -> None:
     # 計測結果配列の変形
     csvList = [] # 出力するcsv
     csvList.append(["num"] + target_list) # 項目名
-    for i in range(max_count):
+    for i in range(setting.max_count):
         # ここから行の生成
         csvList.append([])
         csvList[-1].append(i+1) # 行番号
@@ -83,7 +82,7 @@ def main() -> None:
         if object_check(res_dic[target_name]): # 出力がいずれか一か所でも出ていた場合はテキスト化を行い、そうでなければ行わない。
             csvList.append([]) # 一行開ける
             csvList.append(["responce"]) # タイトル表示
-            for i in range(max_count):
+            for i in range(setting.max_count):
                 # ここから行の生成
                 csvList.append([])
                 csvList[-1].append(i+1) # 行番号
@@ -99,7 +98,7 @@ def main() -> None:
 
     with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w",newline="") as csv_file:
         writer = csv.writer(csv_file,delimiter=spread)
-        writer.writerow([now.replace('-','/').replace('_',' ')] + [None] * (len(target_list) - 1) + [f"データの個数：{max_count}"] ) # 最初の行にファイル出力のタイミングとデータの総数を記載
+        writer.writerow([now.replace('-','/').replace('_',' ')] + [None] * (len(target_list) - 1) + [f"データの個数：{setting.max_count}"] ) # 最初の行にファイル出力のタイミングとデータの総数を記載
         writer.writerows(csvList)
     
     print("終了しました。\n")
