@@ -68,7 +68,7 @@ def main() -> None:
 
     # 計測結果配列の変形
     csvList = [] # 出力するcsv
-    csvList.appendU(["num"] + target_list) # 項目名
+    csvList.append(["num"] + target_list) # 項目名
     for i in range(max_count):
         # ここから行の生成
         csvList.append([])
