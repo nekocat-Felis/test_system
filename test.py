@@ -97,7 +97,7 @@ def main() -> None:
 
     with open(f"{__file__[:-7]}\\diff\\{file_name}",mode="w",encoding="utf-8",newline="") as csv_file:
         writer = csv.writer(csv_file,delimiter=spread)
-        writer.writerow([now.replace('-','/').replace('_',' ')]) # 最初の行にファイル出力のタイミングを記載
+        writer.writerow([now.replace('-','/').replace('_',' ')] + [None] * (len(target_list) - 1) + [f"データの個数：{max_count}"] ) # 最初の行にファイル出力のタイミングとデータの総数を記載
         writer.writerows(csvList)
     
     print("終了しました。\n")
