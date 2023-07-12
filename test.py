@@ -67,8 +67,8 @@ def main() -> None:
             print("\nc または t と入力してください。\n")
 
     # 計測結果配列の変形
-    titleLine = ["num"] + target_list # 項目名
     csvList = [] # 出力するcsv
+    csvList.appendU(["num"] + target_list) # 項目名
     for i in range(max_count):
         # ここから行の生成
         csvList.append([])
