@@ -18,7 +18,6 @@ for dir_name in dir_list:
         method_dic[dir_name[7:-1]] = import_module(f"target.{dir_name[7:-1]}.main")
         sys.path.remove(f"{__file__[:-7]}target\\{dir_name[7:-1]}")
     except:
-        print(dir_name[7:-1])
         if dir_name[7:-1] not in setting.escape_list:
             error_array.append(dir_name[7:-1])
 target_list = list(method_dic.keys())
